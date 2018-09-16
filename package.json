@@ -9,7 +9,7 @@
     "node": "*"
   },
   "files": [
-    "./dist/**/*"
+    "dist/"
   ],
   "scripts": {
     "build": "tsc",
