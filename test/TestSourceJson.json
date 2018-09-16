@@ -1,0 +1,43 @@
+{
+  "simpleObject": {
+    "name": "one",
+    "id": 1,
+    "isValid": true
+  },
+  "incompleteSimpleObject": {
+    "name": "one",
+    "isValid": true
+  },
+  "complexObject": {
+    "class1": {
+      "name": "one",
+      "id": 1,
+      "isValid": true
+    }
+  },
+  "extraComplexObject": {
+    "class1": {
+      "name": "one",
+      "id": 1,
+      "isValid": true,
+      "isNotValid": false
+    }
+  },
+  "arrayObject": {
+    "array1": ["hello", "world"]
+  },
+  "classArrayObject": {
+    "objArray1": [
+      {
+        "name": "one",
+        "id": 1,
+        "isValid": true
+      },
+      {
+        "name": "two",
+        "id": 2,
+        "isValid": false
+      }
+    ]
+  }
+}
