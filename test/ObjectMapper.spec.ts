@@ -6,47 +6,6 @@ import testObjects from "./TestSourceJson.json";
 should();
 
 describe("JsonMapper", () => {
-  // const testObjects.simpleObject = {
-  //   name: "one",
-  //   id: 1,
-  //   isValid: true
-  // };
-  // const incompletetestObjects.SimpleObject = {
-  //   name: "one",
-  //   isValid: true
-  // };
-  // const testObjects.complexObject = {
-  //   class1: {
-  //     name: "one",
-  //     id: 1,
-  //     isValid: true
-  //   }
-  // };
-  // const extratestObjects.ComplexObject = {
-  //   class1: {
-  //     name: "one",
-  //     id: 1,
-  //     isValid: true,
-  //     isNotValid: false
-  //   }
-  // };
-  // const testObjects.arrayObject = {
-  //   array1: ["hello", "world"]
-  // };
-  // const classtestObjects.ArrayObject = {
-  //   classArray1: [
-  //     {
-  //       name: "one",
-  //       id: 1,
-  //       isValid: true
-  //     },
-  //     {
-  //       name: "two",
-  //       id: 2,
-  //       isValid: false
-  //     }
-  //   ]
-  // };
   it("should return an instantiated class of type T", () => {
     const mappedObj = ObjectMapper.mapObject(
       testClasses.BasicPrimitives,
