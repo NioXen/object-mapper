@@ -25,7 +25,7 @@ export default class ObjectMapper {
         return;
       }
       const decoratorType = this.getPropertyDesignType(instance, key);
-      instance[key] = this.mapJsonProperty(
+      instance[key] = this.mapProperty(
         decoratorMetadata,
         decoratorName,
         decoratorType,
@@ -35,22 +35,25 @@ export default class ObjectMapper {
     return instance;
   }
 
-  private static mapJsonProperty<T>(
+  private static mapProperty<T>(
     decoratorMetadata: IDecoratorMetadata<any>,
     decoratorName: string,
     decoratorType: { new (): T },
-    json: object
+    srcObj: object
   ): any {
     if (
       isPrimitiveOrPrimitiveClass(decoratorType) ||
       isPrimitiveOrPrimitiveClass(decoratorMetadata._class)
     ) {
-      return json[decoratorName];
+      return srcObj[decoratorName];
     }
     if (!isArrayClass(decoratorType)) {
-      return this.mapObject(decoratorType, json[decoratorName]);
-    } else if (decoratorMetadata._class && isArrayClass(json[decoratorName])) {
-      return json[decoratorName].map(item =>
+      return this.mapObject(decoratorType, srcObj[decoratorName]);
+    } else if (
+      decoratorMetadata._class &&
+      isArrayClass(srcObj[decoratorName])
+    ) {
+      return srcObj[decoratorName].map(item =>
         this.mapObject(decoratorMetadata._class, item)
       );
     }

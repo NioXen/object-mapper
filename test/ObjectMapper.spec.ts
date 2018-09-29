@@ -92,7 +92,7 @@ describe("JsonMapper", () => {
     mappedObj.should.have.property("id").that.is.null;
     mappedObj.should.have.property("isValid").that.is.null;
   });
-  it("should not map un-decorated properties", () => {
+  it("should ignore un-decorated properties", () => {
     const mappedObj = ObjectMapper.mapObject(
       testClasses.UnDecoratedPrimitives,
       testObjects.simpleObject
