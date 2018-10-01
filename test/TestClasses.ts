@@ -1,4 +1,4 @@
-import { MapProperty } from "../src/ObjectMapper";
+import { MapProperty } from "../src/DecMap";
 
 export class BasicPrimitives {
   @MapProperty()
@@ -26,11 +26,11 @@ export class NamedObject {
 }
 export class PrimitivesArray {
   @MapProperty({ _class: String })
-  array1: String[] = [];
+  array1: string[] = [];
 }
 export class NamedPrimitivesArray {
   @MapProperty({ name: "array1", _class: String })
-  aarray1: String[] = [];
+  aarray1: string[] = [];
 }
 export class ObjectsArray {
   @MapProperty({ _class: BasicPrimitives })
@@ -44,4 +44,8 @@ export class UnDecoratedPrimitives {
   name: string = "";
   id: number = 0;
   isValid: boolean = false;
+}
+export class InvalidPrimitivesArray {
+  @MapProperty()
+  array1: string[] = [];
 }

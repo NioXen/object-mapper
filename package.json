@@ -1,7 +1,8 @@
 {
-  "name": "object-mapper",
-  "version": "1.0.0",
-  "description": "",
+  "name": "ts-dec-map",
+  "version": "0.0.3",
+  "description": "Typescript object mapper using explicit decorators",
+  "keywords": ["typescript", "object mapper", "decorators"],
   "main": "./dist/ObjectMapper.js",
   "types": "./dist/ObjectMapper.d.ts",
   "private": true,
@@ -9,11 +10,11 @@
     "node": "*"
   },
   "files": [
-    "dist/"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register test/ObjectMapper.spec.ts",
+    "test": "mocha --require ts-node/register test/ObjectMapper.spec.ts",
     "clean": "rm -r ./dist/*"
   },
   "author": {

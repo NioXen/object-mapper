@@ -26,6 +26,9 @@
   "arrayObject": {
     "array1": ["hello", "world"]
   },
+  "numberArrayObject": {
+    "array1": [1, 2, 3]
+  },
   "classArrayObject": {
     "objArray1": [
       {

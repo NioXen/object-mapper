@@ -1,5 +1,5 @@
-import ObjectMapper from "../src/ObjectMapper";
-import * as testClasses from "./TestClasses.spec";
+import DecMap from "../src/DecMap";
+import * as testClasses from "./TestClasses";
 import "mocha";
 import { should } from "chai";
 import testObjects from "./TestSourceJson.json";
@@ -7,21 +7,21 @@ should();
 
 describe("JsonMapper", () => {
   it("should return an instantiated class of type T", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.BasicPrimitives,
       testObjects.simpleObject
     );
     mappedObj.should.be.an.instanceof(testClasses.BasicPrimitives);
   });
   it("should map decorated primitive properties by key", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.BasicPrimitives,
       testObjects.simpleObject
     );
     mappedObj.should.deep.equal(testObjects.simpleObject);
   });
   it("should map decorated primitive properties by decorated name if provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.NamedPrimitives,
       testObjects.simpleObject
     );
@@ -32,14 +32,14 @@ describe("JsonMapper", () => {
     });
   });
   it("should map decorated object properties by design:type", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.BasicObject,
       testObjects.complexObject
     );
     mappedObj.should.deep.equal(testObjects.complexObject);
   });
   it("should map decorated object properties by decorated name if provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.NamedObject,
       testObjects.complexObject
     );
@@ -48,14 +48,14 @@ describe("JsonMapper", () => {
       .which.deep.equals(testObjects.complexObject.class1);
   });
   it("should map decorated arrays of primitive type by key when a decorator _class is provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.PrimitivesArray,
       testObjects.arrayObject
     );
     mappedObj.should.deep.equal(testObjects.arrayObject);
   });
   it("should map decorated arrays of primitive type by name when a decorator _class & name are provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.NamedPrimitivesArray,
       testObjects.arrayObject
     );
@@ -64,14 +64,14 @@ describe("JsonMapper", () => {
       .which.deep.equals(testObjects.arrayObject.array1);
   });
   it("should map decorated arrays of objects by key when a decorator _class is provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.ObjectsArray,
       testObjects.classArrayObject
     );
     mappedObj.should.deep.equal(testObjects.classArrayObject);
   });
   it("should map decorated arrays of objects by name when a decorator _class & name are provided", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.NamedObjectsArray,
       testObjects.classArrayObject
     );
@@ -80,20 +80,20 @@ describe("JsonMapper", () => {
       .with.deep.members(testObjects.classArrayObject.objArray1);
   });
   it("should map decorated properties which do not exist on the source as null", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.BasicPrimitives,
       testObjects.incompleteSimpleObject
     );
     mappedObj.should.have.property("id").which.equals(null);
   });
   it("should map decorated properties as null when an empty source object is provided", () => {
-    const mappedObj = ObjectMapper.mapObject(testClasses.BasicPrimitives, {});
+    const mappedObj = DecMap.mapObject(testClasses.BasicPrimitives, {});
     mappedObj.should.have.property("name").that.is.null;
     mappedObj.should.have.property("id").that.is.null;
     mappedObj.should.have.property("isValid").that.is.null;
   });
   it("should ignore un-decorated properties", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.UnDecoratedPrimitives,
       testObjects.simpleObject
     );
@@ -101,11 +101,27 @@ describe("JsonMapper", () => {
     mappedObj.should.deep.equal(freshObj);
   });
   it("should ignore source object properties which are not declared on the decorated class", () => {
-    const mappedObj = ObjectMapper.mapObject(
+    const mappedObj = DecMap.mapObject(
       testClasses.BasicObject,
       testObjects.extraComplexObject
     );
     mappedObj.class1.should.not.have.property("isNotValid");
     mappedObj.should.deep.equal(testObjects.complexObject);
+  });
+  it("should map array elements as null when the types are incompatible", () => {
+    const mappedObj = DecMap.mapObject(
+      testClasses.PrimitivesArray,
+      testObjects.numberArrayObject
+    );
+    mappedObj.should.have.property("array1").with.length(3);
+    mappedObj.array1.should.deep.equal([null, null, null]);
+  });
+  it("should throw an error when an array is decorated with no _class", () => {
+    (function() {
+      const mappedObj = DecMap.mapObject(
+        testClasses.InvalidPrimitivesArray,
+        testObjects.arrayObject
+      );
+    }.should.throw(Error));
   });
 });

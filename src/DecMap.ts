@@ -1,5 +1,10 @@
 import "reflect-metadata";
-import { isPrimitiveOrPrimitiveClass, isArrayClass } from "./Utils";
+import {
+  isPrimitiveOrPrimitiveClass,
+  isArrayClass,
+  primitiveTypeCheck,
+  hasAnyNullOrUndefined
+} from "./Utils";
 
 const PROPERTY_DECORATOR_KEY = "MapProperty";
 
@@ -8,12 +13,11 @@ interface IDecoratorMetadata<T> {
   _class?: { new (): T };
 }
 
-export default class ObjectMapper {
+export default class DecMap {
   public static mapObject<T>(type: { new (): T }, srcObj: object): T {
-    if (typeof srcObj != "object") {
-      return undefined;
-    }
+    if (hasAnyNullOrUndefined(type, srcObj)) return null;
     const instance = new type();
+    if (typeof srcObj != "object") return instance;
     Object.keys(instance).forEach((key: string) => {
       const decoratorMetadata = this.getPropertyMetadata(instance, key);
       if (!decoratorMetadata) return;
@@ -27,9 +31,8 @@ export default class ObjectMapper {
       const decoratorType = this.getPropertyDesignType(instance, key);
       instance[key] = this.mapProperty(
         decoratorMetadata,
-        decoratorName,
         decoratorType,
-        srcObj
+        srcObj[decoratorName]
       );
     });
     return instance;
@@ -37,28 +40,40 @@ export default class ObjectMapper {
 
   private static mapProperty<T>(
     decoratorMetadata: IDecoratorMetadata<any>,
-    decoratorName: string,
     decoratorType: { new (): T },
-    srcObj: object
+    srcProperty: any
   ): any {
-    if (
+    const isPrimitive =
       isPrimitiveOrPrimitiveClass(decoratorType) ||
-      isPrimitiveOrPrimitiveClass(decoratorMetadata._class)
-    ) {
-      return srcObj[decoratorName];
-    }
-    if (!isArrayClass(decoratorType)) {
-      return this.mapObject(decoratorType, srcObj[decoratorName]);
-    } else if (
-      decoratorMetadata._class &&
-      isArrayClass(srcObj[decoratorName])
-    ) {
-      return srcObj[decoratorName].map(item =>
-        this.mapObject(decoratorMetadata._class, item)
-      );
+      isPrimitiveOrPrimitiveClass(decoratorMetadata._class);
+
+    if (isArrayClass(decoratorType)) {
+      if (!decoratorMetadata._class)
+        throw new Error(
+          "An array is declared but no _class is present in the metadata"
+        );
+      if (!isArrayClass(srcProperty)) return null;
+      if (isPrimitive) {
+        return srcProperty.map(item => {
+          if (primitiveTypeCheck(decoratorMetadata._class, item)) {
+            return item;
+          } else return null;
+        });
+      } else {
+        return srcProperty.map(item => {
+          return this.mapObject(decoratorMetadata._class, item);
+        });
+      }
+    } else {
+      if (isPrimitive) {
+        if (primitiveTypeCheck(decoratorType, srcProperty)) {
+          return srcProperty;
+        }
+      } else {
+        return this.mapObject(decoratorType, srcProperty);
+      }
     }
   }
-
   private static getPropertyMetadata<T>(
     target: any,
     propertyKey: string

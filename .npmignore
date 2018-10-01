@@ -1,4 +1,7 @@
 src
 test
 tsconfig.json
+travis.yml
 *.code-workspace
+
+object-mapper-*.tgz
