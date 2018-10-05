@@ -1,6 +1,8 @@
 dist/
 node_modules/
 *.code-workspace
-travis.yml
+.prettierrc
+.nyc_output
+coverage
 
-object-mapper-*.tgz
+*.tgz

@@ -1,4 +1,4 @@
-import { MapProperty } from "../src/DecMap";
+import { MapProperty } from "../src/Mapper";
 
 export class BasicPrimitives {
   @MapProperty()

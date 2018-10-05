@@ -1,0 +1,30 @@
+language: node_js
+node_js:
+  - "stable"
+
+cache:
+  directories:
+    - "node_modules"
+
+before_script:
+  - npm run build
+
+script:
+  - npm run test
+
+after_success:
+  - npm pack
+
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "NioXen"
+  - git config --local user.email "bgibbonsdev@gmail.com"
+  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+  
+deploy:
+  - provider: npm
+    skip_cleanup: true
+    email: "bgibbonsdev@gmail.com"
+    api_key: $NPM_TOKEN
+    on:
+      tags: true

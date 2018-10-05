@@ -1,21 +1,30 @@
 {
-  "name": "ts-dec-map",
-  "version": "0.0.3",
-  "description": "Typescript object mapper using explicit decorators",
-  "keywords": ["typescript", "object mapper", "decorators"],
-  "main": "./dist/ObjectMapper.js",
-  "types": "./dist/ObjectMapper.d.ts",
-  "private": true,
+  "name": "typesafe-mapper",
+  "version": "0.0.1",
+  "description": "Typesafe-ish object mapper using decorators",
+  "keywords": [
+    "typescript",
+    "object mapper",
+    "decorators"
+  ],
+  "main": "./dist/Mapper.js",
+  "types": "./dist/Mapper.d.ts",
   "engines": {
     "node": "*"
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/NioXen/typesafe-mapper.git"
+  },
   "scripts": {
     "build": "tsc",
-    "test": "mocha --require ts-node/register test/ObjectMapper.spec.ts",
-    "clean": "rm -r ./dist/*"
+    "test": "nyc mocha --require ts-node/register test/*.spec.ts",
+    "clean": "rm -r ./dist typesafe-mapper-*.tgz",
+    "build-watch": "tsc --watch",
+    "prepack": "npm run build"
   },
   "author": {
     "name": "Ben Gibbons",
@@ -23,13 +32,29 @@
     "url": "http://github.com/NioXen"
   },
   "license": "ISC",
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "coverage"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true  
+  },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.4",
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
     "should": "^13.2.3",
+    "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
     "typescript": "^2.9.2"
   },

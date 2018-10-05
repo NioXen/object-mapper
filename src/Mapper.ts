@@ -1,10 +1,5 @@
 import "reflect-metadata";
-import {
-  isPrimitiveOrPrimitiveClass,
-  isArrayClass,
-  primitiveTypeCheck,
-  hasAnyNullOrUndefined
-} from "./Utils";
+import { isPrimitiveOrPrimitiveClass, isArrayClass, primitiveTypeCheck, hasAnyNullOrUndefined } from "./Utils";
 
 const PROPERTY_DECORATOR_KEY = "MapProperty";
 
@@ -13,27 +8,24 @@ interface IDecoratorMetadata<T> {
   _class?: { new (): T };
 }
 
-export default class DecMap {
-  public static mapObject<T>(type: { new (): T }, srcObj: object): T {
+interface IGenericObject {
+  [key: string]: any;
+}
+
+export default class Mapper {
+  public static mapObject<T>(type: { new (): T }, srcObj: IGenericObject): T {
     if (hasAnyNullOrUndefined(type, srcObj)) return null;
     const instance = new type();
-    if (typeof srcObj != "object") return instance;
     Object.keys(instance).forEach((key: string) => {
       const decoratorMetadata = this.getPropertyMetadata(instance, key);
       if (!decoratorMetadata) return;
-      const decoratorName: string = decoratorMetadata.name
-        ? decoratorMetadata.name
-        : key;
+      const decoratorName: string = decoratorMetadata.name ? decoratorMetadata.name : key;
       if (srcObj[decoratorName] == undefined) {
         instance[key] = null;
         return;
       }
       const decoratorType = this.getPropertyDesignType(instance, key);
-      instance[key] = this.mapProperty(
-        decoratorMetadata,
-        decoratorType,
-        srcObj[decoratorName]
-      );
+      instance[key] = this.mapProperty(decoratorMetadata, decoratorType, srcObj[decoratorName]);
     });
     return instance;
   }
@@ -41,23 +33,18 @@ export default class DecMap {
   private static mapProperty<T>(
     decoratorMetadata: IDecoratorMetadata<any>,
     decoratorType: { new (): T },
-    srcProperty: any
+    srcProperty: any,
   ): any {
     const isPrimitive =
-      isPrimitiveOrPrimitiveClass(decoratorType) ||
-      isPrimitiveOrPrimitiveClass(decoratorMetadata._class);
+      isPrimitiveOrPrimitiveClass(decoratorType) || isPrimitiveOrPrimitiveClass(decoratorMetadata._class);
 
     if (isArrayClass(decoratorType)) {
-      if (!decoratorMetadata._class)
-        throw new Error(
-          "An array is declared but no _class is present in the metadata"
-        );
-      if (!isArrayClass(srcProperty)) return null;
+      if (!decoratorMetadata._class) throw new Error("An array is declared but no _class is present in the metadata");
+      if (!isArrayClass(srcProperty)) return;
       if (isPrimitive) {
         return srcProperty.map(item => {
-          if (primitiveTypeCheck(decoratorMetadata._class, item)) {
-            return item;
-          } else return null;
+          if (primitiveTypeCheck(decoratorMetadata._class, item)) return item;
+          else return null;
         });
       } else {
         return srcProperty.map(item => {
@@ -66,30 +53,23 @@ export default class DecMap {
       }
     } else {
       if (isPrimitive) {
-        if (primitiveTypeCheck(decoratorType, srcProperty)) {
-          return srcProperty;
-        }
+        if (primitiveTypeCheck(decoratorType, srcProperty)) return srcProperty;
+        else return null;
       } else {
         return this.mapObject(decoratorType, srcProperty);
       }
     }
   }
-  private static getPropertyMetadata<T>(
-    target: any,
-    propertyKey: string
-  ): IDecoratorMetadata<T> {
+  private static getPropertyMetadata<T>(target: any, propertyKey: string): IDecoratorMetadata<T> {
     return Reflect.getMetadata(PROPERTY_DECORATOR_KEY, target, propertyKey);
   }
-  private static getPropertyDesignType<T>(
-    target: any,
-    propertyKey: string
-  ): { new (): T } {
+  private static getPropertyDesignType<T>(target: any, propertyKey: string): { new (): T } {
     return Reflect.getMetadata("design:type", target, propertyKey);
   }
 }
 
 export function MapProperty<T>(
-  metadata?: IDecoratorMetadata<T> | string
+  metadata?: IDecoratorMetadata<T> | string,
 ): (target: Object, targetKey: string | symbol) => void {
   let decoratorMetadata: IDecoratorMetadata<T>;
   if (typeof metadata === "string" || metadata instanceof String) {

@@ -1,4 +1,4 @@
-# Typescript Decorated Mapper
+# Typesafe-ish Object Mapper
 ___
 ## Introduction
 This was a total learning effort as I wanted to practice using ORM's but quickly realised I needed
@@ -15,14 +15,9 @@ Decorators are explained in the [TypeScript docs](https://www.typescriptlang.org
 This project also uses [reflect-metadata](https://www.npmjs.com/package/reflect-metadata).
 
 **Be warned** there is a liberal use of `null` in this project. I have read in many places that this is poor practice, but this was specifically created to be used in conjuction with an orm. I figured that I would leave the null checking to the orm rather than throwing undefined around.
-
-This preference also manifests 2 other places:
-
-* `ObjectMapper.mapObject(targetClass, srcObj)` will return null if either of the arguments are `null` or `undefined`.
-* An instance of `targetClass` will also be instantiated and returned as long as the above is not true.
 ___
 
-### The Decorators
+## The Decorators
 Any decorated property will be mapped. The decorator function accepts either an object (with optional properties `name` and `_class`), a string (which will become `name` internally), or no arguments.
 
 The definition for the decorator is:
@@ -41,6 +36,7 @@ It can be used on the following ways:
 
 `_class` only needs to be provided for array properties. This is because in it's current form, Typescript decorators do not capture the underlying type of array elements. If this changes, this will become obselete.
 
+## The Logic
 If `_class` is not provided but an array is decorated, an `Error` will be thrown.
 
 If an array on the source object is an array of primitives then `_class` must be the corresponding boxed primitive; but these will still be mapped using their primitive type. Example:
@@ -52,17 +48,26 @@ class PrimitivesArray {
 const srcObj = {
     array1: ["foo", "bar"]
 }
-const mappedObj = ObjectMapper.mapObject(PrimitivesArray, srcObj);
+const mappedObj = Mapper.mapObject(PrimitivesArray, srcObj);
 const console.log(typeof mappedObj.array1[0]);
 // returns string
 ```
 When mapping non-array properties by key, it is sufficient to decorate properties with `@MapProperty()` and no further arguments.
+
+### The Nulls
+`null` will be returned from `.mapObject` if either of the arguments are `null` or `undefined`.
+
+A decorated property will be set to null :
+* If addressing it on the source object returns `undefined`.
+* If the primitive types do not match.
+
+A decorated array will have it's elements set to null when the corresponding array element on the source object does not match the declared type.
 ___
 
 ## So how can **I** use it?
 To decorate your class:
 ```
-import { MapProperty } from 'ObjectMapper'
+import { MapProperty } from 'typesafe-mapper'
 
 class exampleClass {
     @MapProperty()
@@ -72,9 +77,9 @@ class exampleClass {
 ```
 Just import the main file into your project and call the `mapObject` method:
 ```
-import ObjectMapper from "../src/ObjectMapper";
+import Mapper from 'typesafe-mapper';
 
-const mappedObject = ObjectMapper.mapObject(targetClass, sourceObject);
+const mappedObject = Mapper.mapObject(targetClass, sourceObject);
 ```
 Where targetClass is the decorated class type and source is the object with the properties to be extracted.
 ___

@@ -1,7 +1,10 @@
 src
 test
 tsconfig.json
-travis.yml
 *.code-workspace
+.prettierrc
+.travis.yml
+.nyc_output
+coverage
 
-object-mapper-*.tgz
+*.tgz
