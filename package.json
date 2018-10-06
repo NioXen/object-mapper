@@ -40,7 +40,9 @@
     ],
     "exclude": [
       "**/*.d.ts",
-      "coverage"
+      "coverage",
+      "dist",
+      "test"
     ],
     "reporter": [
       "lcov"
