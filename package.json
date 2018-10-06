@@ -16,13 +16,15 @@
     "dist"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/NioXen/typesafe-mapper.git"
+    "type": "git",
+    "url": "https://github.com/NioXen/typesafe-mapper.git"
   },
   "scripts": {
     "build": "tsc",
     "test": "nyc mocha --require ts-node/register test/*.spec.ts",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "clean": "rm -r ./dist typesafe-mapper-*.tgz",
+    "clean-coverage": "rm -r coverage .nyc_output",
     "build-watch": "tsc --watch",
     "prepack": "npm run build"
   },
@@ -34,23 +36,23 @@
   "license": "ISC",
   "nyc": {
     "extension": [
-      ".ts",
-      ".tsx"
+      ".ts"
     ],
     "exclude": [
       "**/*.d.ts",
       "coverage"
     ],
     "reporter": [
-      "html"
+      "lcov"
     ],
-    "all": true  
+    "all": true
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.4",
     "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",
     "should": "^13.2.3",

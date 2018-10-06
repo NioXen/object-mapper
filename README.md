@@ -1,4 +1,7 @@
 # Typesafe-ish Object Mapper
+
+![Travis (.com)](https://img.shields.io/travis/com/NioXen/typesafe-mapper.svg)
+
 ___
 ## Introduction
 This was a total learning effort as I wanted to practice using ORM's but quickly realised I needed

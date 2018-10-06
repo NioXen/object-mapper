@@ -1,30 +1,32 @@
 language: node_js
 node_js:
-  - "stable"
-
+  - stable
 cache:
   directories:
-    - "node_modules"
-
+  - node_modules
 before_script:
   - npm run build
-
 script:
   - npm run test
-
 after_success:
-  - npm pack
-
+  - npm run coverage
 before_deploy:
-  # Set up git user name and tag this commit
   - git config --local user.name "NioXen"
   - git config --local user.email "bgibbonsdev@gmail.com"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-  
 deploy:
+  - provider: releases
+    api_key:
+      secure: bOrlsiqGVJ1loYW7b/gMsykZsX/R7dTN5BbldtEdvbUs92/QFKpjtH7yRCojLkI1RI2uKQ3l225VE4ZAEnUXMb3/oN6eSYfCPOXeYCfBLwUMkXu6w7Np5tkX6Zd4j8QpsEVNCzDBlZaBUmw4caVuGTwGuhXF5YlLBukJYRymhSf1ohubVNN5MTGm4Qym4glBc3ubAui5UPkLmnRg9VIyZSzWki20ganc/Hwo+14lWlRzBgJdgIA63E9DyuGLQdldQAd6GwaAV2ssjPvWxfmMaAO1HwJr4K2q93jzskjmzz7rtpsubtbmtlwmPTDJMU94g9TSCJ5I6Dnn2WdUjTJCx4PqrLIvpcvqkNzKimheHQnoZ11DAGoZnRnwEg4HGg7mM9tbAfsH9YPMcbKxKFJD+HZ9yry8Mvuf+sOD8dRqXJj+w+c0iGeC15AmBs/YiKBA2Fn8XOwLY8iSTr7Mzm4WDhMYKAF/weZIId7rE7NXk5JQ2KCg0FDVz5pocn82y7RtC7oecCk1vTz+wG+trXUPsi/jxR2GPeNBvQ2J9w/QqU3RgqKwBH4JP3M7Fp8MSYZHhqzwAEG8GXW71wt35gikJgtdOdTbIEIcmqJKxcsYNCI5eH290uClQ2lfwXPdIbjM/lupqFP+EuAezvC5MzdJmgdSAqO0rH4ZGoZNF/LcEhI=
+    file: typesafe-mapper-*.tgz
+    skip_cleanup: true     
+    on:
+      repo: NioXen/typesafe-mapper
+      tags: true
   - provider: npm
     skip_cleanup: true
     email: "bgibbonsdev@gmail.com"
     api_key: $NPM_TOKEN
     on:
+      repo: NioXen/typesafe-mapper
       tags: true
