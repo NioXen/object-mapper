@@ -2,6 +2,8 @@
 
 ![Travis (.com)](https://img.shields.io/travis/com/NioXen/typesafe-mapper.svg)
 [![Coverage Status](https://coveralls.io/repos/github/NioXen/typesafe-mapper/badge.svg?branch=master)](https://coveralls.io/github/NioXen/typesafe-mapper?branch=master)
+![GitHub tag](https://img.shields.io/github/tag/NioXen/typesafe-mapper.svg)
+
 ___
 ## Introduction
 This was a total learning effort as I wanted to practice using ORM's but quickly realised I needed
